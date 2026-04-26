@@ -142,43 +142,69 @@ example : P → P := by
 /-- If we know `P`, and we also know `P → Q`, we can deduce `Q`.
 This is called "Modus Ponens" by logicians. -/
 example : P → (P → Q) → Q := by
-  sorry
+  intro h1 h2
+  apply h2 at h1
+  exact h1
 
 /-- `→` is transitive. That is, if `P → Q` and `Q → R` are true, then
-so is `P → R`. -/
+  so is `P → R`. -/
 example : (P → Q) → (Q → R) → P → R := by
-  sorry
+  intro hPQ hQR hP  --一次intro多个中间以空格分隔
+  exact hQR (hPQ (hP))  --对于定理的使用，中间也是以空格分隔，定理需要多个条件的，以括号划清嵌套关系
 
-/-- If `h : P → Q → R` with goal `⊢ R` and you `apply h`, you'll get
-two goals! Note that tactics operate on only the first goal. -/
+-- If `h : P → Q → R` with goal `⊢ R` and you `apply h`, you'll get
+-- two goals! Note that tactics operate on only the first goal.
 example : (P → Q → R) → (P → Q) → P → R := by
-  sorry
+  intro hPQR hPQ hP
+  exact hPQR hP (hPQ hP)--hPQ有两个条件，后一个括号里实际上就是hQ的证明，用括号来表示为一个整体
 
 /-
+
 Here are some harder puzzles. They won't teach you anything new about
 Lean, they're just trickier. If you're not into logic puzzles
 and you feel like you understand `intro`, `exact` and `apply`
 then you can just skip these and move onto the next sheet
 in this section, where you'll learn some more tactics.
+
 -/
 variable (S T : Prop)
 
 example : (P → R) → (S → Q) → (R → T) → (Q → R) → S → T := by
-  sorry
+  intro hPR hSQ hRT hQR hS
+  apply (hRT ∘ hQR ∘ hSQ) at hS--∘ 是函数复合，注意顺序为从右到左
+  exact hS
 
 example : (P → Q) → ((P → Q) → P) → Q := by
-  sorry
+  intro hPQ hPQtoP
+  apply hPQ∘ hPQtoP at hPQ
+  exact hPQ
 
 example : ((P → Q) → R) → ((Q → R) → P) → ((R → P) → Q) → P := by
-  sorry
+  intro hPQtoR QRtoP RPtoQ
+  apply QRtoP
+  intro hQ
+  apply hPQtoR
+  intro hP
+  exact hQ
+
 
 example : ((Q → P) → P) → (Q → R) → (R → P) → P := by
-  sorry
+  intro hQPP hQR hRP
+  apply hQPP
+  exact hRP ∘ hQR
 
 example : (((P → Q) → Q) → Q) → P → Q := by
-  sorry
+  intro hPQQQ hP
+  apply hPQQQ
+  intro hPQ
+  exact hPQ (hP)
 
 example :
     (((P → Q → Q) → (P → Q) → Q) → R) →
       ((((P → P) → Q) → P → P → Q) → R) → (((P → P → Q) → (P → P) → Q) → R) → R := by
-  sorry
+  intro h1 h2 h3
+  apply h2
+  intro hPPQ hP1 hP2
+  apply hPPQ
+  intro hP
+  exact hP1
