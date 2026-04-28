@@ -49,7 +49,8 @@ Here's the definition of the limit of a sequence.
 is the assertion that the limit of `a(n)` as `n → ∞` is `t`. -/
 def TendsTo (a : ℕ → ℝ) (t : ℝ) : Prop :=
   ∀ ε > 0, ∃ B : ℕ, ∀ n, B ≤ n → |a n - t| < ε
-
+--a是个函数，从自然数集映射到实数集，n是自然数自变量，a (n)事实上就相当于一个数列,只是以函数的方式定义和表出
+--通过这种方式，我们就变相的定义了数列的收敛
 /-
 
 We've made a definition, so it's our job to now make the API
@@ -126,6 +127,9 @@ example {a : ℕ → ℝ} {t : ℝ} (ha : TendsTo a t) : TendsTo (fun n => -a n)
   apply hB
   exact hn
 
+--使用races 来拆分含前件的假设，并将其应用到goal中
+--通过这种方式，我们将假设的前提引入goal中
+--在假设前提成立的条件下若目标结论与假设结论等价，那么目标的前件推出后件就与假设等价，这样目标论证就得证了
 
 -- Try this one. You don't know enough material to do it yet!
 -- Where do you get stuck? The problem is that I didn't teach you
